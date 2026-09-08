@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Topbar } from './components/Topbar';
-import { Sidebar, CategoryCounts } from './components/Sidebar';
-import { InstalledView } from './components/InstalledView';
-import { OnlineView } from './components/OnlineView';
+import { Sidebar, CategoryCounts, OFFICIAL_CATEGORIES, OFFICIAL_TAGS } from './components/Sidebar';
+import { InstalledView } from './views/installed/InstalledView';
+import { DiscoverView } from './views/discover/DiscoverView';
 import { ProfilesView } from './components/ProfilesView';
 import { DependenciesView } from './components/DependenciesView';
 import { SettingsModal } from './components/SettingsModal';
@@ -14,7 +14,7 @@ import { AppSettings, DownloadProgress, ModProfile, ProfileDetail } from './type
 import { checkModDependencies } from './utils/helpers';
 
 export const App: React.FC = () => {
-  const [currentTab, setCurrentTab] = useState<'installed' | 'online' | 'profiles' | 'dependencies'>('installed');
+  const [currentView, setCurrentView] = useState<'installed' | 'discover' | 'profiles' | 'dependencies'>('installed');
   const [profiles, setProfiles] = useState<ModProfile[]>([]);
   const [activeProfileId, setActiveProfileId] = useState<string>('default');
   const [activeProfile, setActiveProfile] = useState<ProfileDetail | null>(null);
@@ -36,6 +36,7 @@ export const App: React.FC = () => {
   const [modToUninstall, setModToUninstall] = useState<string | null>(null);
   const [confirmSyncOpen, setConfirmSyncOpen] = useState(false);
   const [changelogModName, setChangelogModName] = useState<string | null>(null);
+  const [showProfilesPage, setShowProfilesPage] = useState(false);
 
   // Toast notifications
   const [toast, setToast] = useState<{ message: string; type: 'info' | 'success' | 'error' } | null>(null);
@@ -313,7 +314,7 @@ export const App: React.FC = () => {
 
       {/* Brand Top-Left Cell */}
       <div className="brand">
-        <img src="/icon.png" className="brand-mark" style={{ width: 28, height: 28, borderRadius: 6, objectFit: 'cover' }} alt="Foundry" />
+        <img src="/public/icon.png" className="brand-mark" style={{ width: 28, height: 28, borderRadius: 6, objectFit: 'cover' }} alt="Foundry" />
         <span className="brand-name">Foundry</span>
       </div>
 
@@ -322,18 +323,18 @@ export const App: React.FC = () => {
         activeProfile={activeProfile}
         profiles={profiles}
         onSelectProfile={handleSelectProfile}
-        onOpenProfilesTab={() => setCurrentTab('profiles')}
+        onOpenProfilesTab={() => setShowProfilesPage(true)}
         onOpenSettings={() => setIsSettingsModalOpen(true)}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         searchPlaceholder={
-          currentTab === 'online'
+          currentView === 'discover'
             ? 'Search mod portal by name, tag, or author…'
             : 'Search installed mods…'
         }
         updatesCount={updatesAvailable.length}
         onShowUpdates={() => {
-          setCurrentTab('installed');
+          setCurrentView('installed');
           setSortBy('Recently updated');
         }}
         onLaunchModded={handleLaunchModded}
@@ -357,36 +358,38 @@ export const App: React.FC = () => {
         {/* Navigation Tabs */}
         <div className="tabs">
           <div
-            className={`tab ${currentTab === 'installed' ? 'active' : ''}`}
-            onClick={() => setCurrentTab('installed')}
+            className={`tab ${currentView === 'installed' ? 'active' : ''}`}
+            onClick={() => {
+              setCurrentView('installed');
+              setShowProfilesPage(false);
+            }}
           >
             Installed <span className="n">{installedMods.length}</span>
           </div>
 
           <div
-            className={`tab ${currentTab === 'online' ? 'active' : ''}`}
-            onClick={() => setCurrentTab('online')}
+            className={`tab ${currentView === 'discover' ? 'active' : ''}`}
+            onClick={() => {
+              setCurrentView('discover');
+              setShowProfilesPage(false);
+            }}
           >
             Discover
           </div>
 
           <div
-            className={`tab ${currentTab === 'profiles' ? 'active' : ''}`}
-            onClick={() => setCurrentTab('profiles')}
-          >
-            Profiles
-          </div>
-
-          <div
-            className={`tab ${currentTab === 'dependencies' ? 'active' : ''}`}
-            onClick={() => setCurrentTab('dependencies')}
+            className={`tab ${currentView === 'dependencies' ? 'active' : ''}`}
+            onClick={() => {
+              setCurrentView('dependencies');
+              setShowProfilesPage(false);
+            }}
           >
             Dependencies
           </div>
         </div>
 
         {/* Tab View Switcher */}
-        {currentTab === 'installed' && (
+        {currentView === 'installed' && !showProfilesPage && (
           <InstalledView
             mods={installedMods}
             loading={loadingProfile}
@@ -397,7 +400,7 @@ export const App: React.FC = () => {
             onUpdateMod={(name, ver) => handleInstallMod(name, ver)}
             onInstallMissingDep={(name, ver) => handleInstallMod(name, ver)}
             onOpenChangelog={(name) => setChangelogModName(name)}
-            onGoToOnline={() => setCurrentTab('online')}
+            onGoToOnline={() => setCurrentView('discover')}
             onRefresh={loadActiveProfile}
             searchQuery={searchQuery}
             selectedCategory={selectedCategory}
@@ -407,8 +410,8 @@ export const App: React.FC = () => {
           />
         )}
 
-        {currentTab === 'online' && (
-          <OnlineView
+        {currentView === 'discover' && !showProfilesPage && (
+          <DiscoverView
             installedMods={installedMods}
             onInstallMod={handleInstallMod}
             selectedModName={selectedModName}
@@ -420,7 +423,15 @@ export const App: React.FC = () => {
           />
         )}
 
-        {currentTab === 'profiles' && (
+        {currentView === 'dependencies' && !showProfilesPage && (
+          <DependenciesView
+            mods={installedMods}
+            onInstallMod={handleInstallMod}
+            onShowToast={showToast}
+          />
+        )}
+
+        {(showProfilesPage || currentView === 'profiles') && (
           <ProfilesView
             profiles={profiles}
             activeProfileId={activeProfileId}
@@ -429,14 +440,6 @@ export const App: React.FC = () => {
               loadProfiles();
               loadActiveProfile();
             }}
-            onShowToast={showToast}
-          />
-        )}
-
-        {currentTab === 'dependencies' && (
-          <DependenciesView
-            mods={installedMods}
-            onInstallMod={handleInstallMod}
             onShowToast={showToast}
           />
         )}
