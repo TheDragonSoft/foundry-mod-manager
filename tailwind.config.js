@@ -6,55 +6,142 @@ export default {
   ],
   theme: {
     extend: {
+      /* ====================================================================
+         DESIGN TOKENS — mirrored from CSS custom properties (Spec §1)
+         Use these for utility classes; prefer var() in component CSS
+         ==================================================================== */
       colors: {
-        ink: '#17140f',
-        panel: '#1e1a13',
-        'panel-2': '#251f16',
-        raised: '#2c2419',
-        line: '#3a3122',
-        'line-soft': '#2a2419',
-        foundry: {
-          text: '#ece3d2',
-          'text-dim': '#a89c85',
-          'text-faint': '#736853',
+        /* §1.1 Surfaces */
+        'bg-app': 'var(--bg-app)',
+        'bg-panel': 'var(--bg-panel)',
+        'bg-raised': 'var(--bg-raised)',
+        'bg-hover': 'var(--bg-hover)',
+        'bg-active': 'var(--bg-active)',
+        'border-subtle': 'var(--border-subtle)',
+        'border-strong': 'var(--border-strong)',
+        
+        /* §1.2 Text */
+        'text-1': 'var(--text-1)',
+        'text-2': 'var(--text-2)',
+        'text-3': 'var(--text-3)',
+        'text-disabled': 'var(--text-disabled)',
+        
+        /* §1.3 Accent + Semantic */
+        accent: {
+          DEFAULT: 'var(--accent)',
+          hover: 'var(--accent-hover)',
+          pressed: 'var(--accent-pressed)',
+          subtle: 'var(--accent-subtle)',
         },
-        copper: {
-          DEFAULT: '#e0954a',
-          hover: '#e8a15c',
-          dim: '#7a5227',
-          glow: 'rgba(224,149,74,0.16)',
-        },
-        good: {
-          DEFAULT: '#8faa63',
-          bg: 'rgba(143,170,99,0.12)',
+        success: {
+          DEFAULT: 'var(--success)',
+          subtle: 'var(--success-subtle)',
         },
         warn: {
-          DEFAULT: '#d9a441',
-          bg: 'rgba(217,164,65,0.12)',
+          DEFAULT: 'var(--warn)',
+          subtle: 'var(--warn-subtle)',
         },
-        bad: {
-          DEFAULT: '#c15a3f',
-          bg: 'rgba(193,90,63,0.12)',
+        danger: {
+          DEFAULT: 'var(--danger)',
+          subtle: 'var(--danger-subtle)',
         },
-        factorio: {
-          bg: '#111215',
-          sidebar: '#16181d',
-          card: '#1d2027',
-          cardHover: '#252932',
-          border: '#2c313c',
-          borderLight: '#3f4553',
-          orange: '#e77c22',
-          orangeHover: '#f98c35',
-          orangeDark: '#b85c12',
-          text: '#e6e8eb',
-          textMuted: '#949ba4',
-        }
+        
+        /* Legacy aliases (DEPRECATED — keep for gradual migration) */
+        ink: 'var(--ink)',
+        panel: 'var(--panel)',
+        'panel-2': 'var(--panel-2)',
+        raised: 'var(--raised)',
+        line: 'var(--line)',
+        'line-soft': 'var(--line-soft)',
+        text: 'var(--text)',
+        'text-dim': 'var(--text-dim)',
+        'text-faint': 'var(--text-faint)',
+        copper: 'var(--copper)',
+        'copper-dim': 'var(--copper-dim)',
+        'copper-glow': 'var(--copper-glow)',
+        good: 'var(--good)',
+        'good-bg': 'var(--good-bg)',
+        bad: 'var(--bad)',
+        'bad-bg': 'var(--bad-bg)',
       },
+      
+      /* §1.4 Typography */
       fontFamily: {
-        slab: ['"Zilla Slab"', 'serif'],
-        sans: ['Inter', 'sans-serif'],
-        mono: ['"IBM Plex Mono"', 'monospace'],
-      }
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['IBM Plex Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+        /* DELETE: slab font removed per spec §1.4 — replace all usages with sans */
+      },
+      
+      fontSize: {
+        /* Spec §1.4 type scale */
+        overline: ['11px', { lineHeight: '1.45', letterSpacing: '0.08em' }],
+        caption: ['12px', { lineHeight: '1.45' }],
+        base: ['13px', { lineHeight: '1.45' }],
+        lg: ['14px', { lineHeight: '1.45' }],
+        section: ['16px', { lineHeight: '1.2', fontWeight: '600' }],
+        page: ['20px', { lineHeight: '1.2', fontWeight: '650' }],
+      },
+      
+      /* §1.5 Spacing (8pt grid) */
+      spacing: {
+        '1': '4px',
+        '2': '8px',
+        '3': '12px',
+        '4': '16px',
+        '5': '24px',
+        '6': '32px',
+        '7': '48px',
+      },
+      
+      /* Control heights */
+      height: {
+        'sm': '28px',
+        'md': '36px',
+        'lg': '44px',
+        'row': '56px',
+      },
+      minHeight: {
+        'sm': '28px',
+        'md': '36px',
+        'lg': '44px',
+        'row': '56px',
+      },
+      
+      /* §1.6 Radii */
+      borderRadius: {
+        'sm': '6px',   /* chips, kbd, badges */
+        'md': '8px',   /* controls, inputs, buttons */
+        'lg': '12px',  /* cards, modals, rail */
+      },
+      
+      /* §1.8 Motion */
+      transitionDuration: {
+        'fast': '140ms',
+        'med': '200ms',
+        'slow': '280ms',
+      },
+      
+      /* §1.9 Focus ring */
+      ringColor: {
+        accent: 'var(--accent)',
+      },
+      ringOffsetWidth: {
+        'focus': '2px',
+      },
+      
+      /* §1.10 Scrollbars */
+      scrollbarWidth: {
+        'thin': '8px',
+      },
+      
+      /* Layout */
+      maxWidth: {
+        'content': '960px',  /* §5 form tabs max-width */
+      },
+      width: {
+        'sidebar': '240px',  /* §3.5 sidebar fixed width */
+        'rail': '360px',     /* §4.3 detail rail width */
+      },
     },
   },
   plugins: [],
