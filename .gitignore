@@ -1,10 +1,11 @@
-```gitignore
 # Dependencies
 node_modules/
 
 # Build outputs
 dist/
+dist-electron/
 build/
+release/
 *.js.map
 *.ts.map
 
@@ -67,4 +68,3 @@ Thumbs.db
 *.tar.bz2
 *.tar.xz
 *.tar.zst
-```

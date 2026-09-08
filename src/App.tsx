@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Topbar } from './components/Topbar';
-import { Sidebar, CategoryCounts, OFFICIAL_CATEGORIES, OFFICIAL_TAGS } from './components/Sidebar';
+import { Sidebar, CategoryCounts } from './components/Sidebar';
 import { InstalledView } from './views/installed/InstalledView';
 import { DiscoverView } from './views/discover/DiscoverView';
 import { ProfilesView } from './components/ProfilesView';
@@ -314,7 +314,7 @@ export const App: React.FC = () => {
 
       {/* Brand Top-Left Cell */}
       <div className="brand">
-        <img src="/public/icon.png" className="brand-mark" style={{ width: 28, height: 28, borderRadius: 6, objectFit: 'cover' }} alt="Foundry" />
+        <img src="/icon.png" className="brand-mark" style={{ width: 28, height: 28, borderRadius: 6, objectFit: 'cover' }} alt="Foundry" />
         <span className="brand-name">Foundry</span>
       </div>
 
