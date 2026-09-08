@@ -1,4 +1,4 @@
-﻿<p align="center">
+<p align="center">
   <img src="assets/logo.png" width="128" height="128" alt="Foundry Logo" style="border-radius: 24px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);">
 </p>
 
