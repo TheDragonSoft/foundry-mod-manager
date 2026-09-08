@@ -1,55 +1,111 @@
-# Factorio Mod Manager
+﻿<p align="center">
+  <img src="assets/logo.png" width="128" height="128" alt="Foundry Logo" style="border-radius: 24px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);">
+</p>
 
-A modern, high-performance mod manager for **Factorio** built with **React**, **TypeScript**, **Tailwind CSS**, and **Express / Electron**, inspired by **r2modman**.
+<h1 align="center">Foundry</h1>
 
-It integrates directly with the **official Factorio Mod Portal API** (`mods.factorio.com`) for browsing, searching, dependencies, and changelogs, while routing all downloads through the **re146 Cloudflare R2 storage mirror** (`https://mods-storage.re146.dev/`) so you can download mods without requiring official Factorio account login tokens.
+<p align="center">
+  <b>A modern, high-performance Factorio Mod Manager built with Electron, React, and TypeScript.</b><br>
+  <i>Inspired by r2modman — designed for instant browsing, isolated modpacks, and blazing-fast downloads.</i>
+</p>
+
+<p align="center">
+  <a href="https://github.com/TheDragonSoft/foundry-mod-manager/releases"><img src="https://img.shields.io/github/v/release/TheDragonSoft/foundry-mod-manager?color=e0954a&style=for-the-badge&logo=github" alt="Release"></a>
+  <a href="https://factorio.com"><img src="https://img.shields.io/badge/Factorio-2.0%20Space%20Age-e0954a?style=for-the-badge" alt="Factorio 2.0"></a>
+  <a href="https://github.com/TheDragonSoft/foundry-mod-manager/releases"><img src="https://img.shields.io/badge/Platform-Windows%20x64-251f16?style=for-the-badge&logo=windows" alt="Platform"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-8faa63?style=for-the-badge" alt="License"></a>
+</p>
+
+<p align="center">
+  <a href="#screenshots">Screenshots</a> •
+  <a href="#downloads">Downloads</a> •
+  <a href="#key-features">Key Features</a> •
+  <a href="#how-to-run--build">Development</a> •
+  <a href="#project-architecture">Architecture</a>
+</p>
+
+---
+
+## Downloads
+
+Get the latest release of Foundry for Windows:
+
+| Package | Type | Download Link |
+| :--- | :--- | :--- |
+| **Windows Installer** | `.exe` (NSIS) | [⬇️ **Download Foundry Setup 1.0.0.exe**](https://github.com/TheDragonSoft/foundry-mod-manager/releases/download/v1.0.0/Foundry.Setup.1.0.0.exe) |
+| **Portable Version** | `.exe` (Standalone) | [📦 **Download Foundry 1.0.0.exe**](https://github.com/TheDragonSoft/foundry-mod-manager/releases/download/v1.0.0/Foundry.1.0.0.exe) |
+
+---
+
+## Screenshots
+
+### 🛠️ Installed Mods & Smart Dependency Resolution
+Manage active mods with individual toggles, load-order verification, search, disk usage statistics, and real-time dependency issue resolution.
+
+![Foundry Installed Mods View](assets/screenshot-installed.png)
+
+### 🌐 Official Mod Portal Catalog & 1-Click Install
+Browse over 23,000 mods directly from the official portal with instant local search, Factorio 2.0 (Space Age) compatibility filtering, category tags, and high-speed mirror downloads.
+
+![Foundry Discover Online Catalog View](assets/screenshot-discover.png)
 
 ---
 
 ## Key Features
 
-- **r2modman-Style Profiles:**
-  - Create, switch, clone, and delete isolated mod profiles (e.g. *Space Age Vanilla+*, *Krastorio 2*, *Ultracube*, *Multiplayer Session*).
-  - Every profile keeps its own downloaded zip archives and isolated `mod-list.json`.
-  - **Shareable Profile Codes:** Export any profile into a shareable string code (compressed JSON). Friends can paste the code to automatically download and configure the exact same mod list and versions!
+- 🔄 **r2modman-Style Isolated Profiles:**
+  - Create, clone, switch, and delete completely isolated mod profiles (e.g. *Space Age Vanilla+*, *Krastorio 2*, *Ultracube*, *Multiplayer Session*).
+  - Each profile manages its own separate mod archives and independent `mod-list.json`.
+  - **Shareable Profile Codes:** Export any profile into a compact shareable string. Teammates can paste the code to instantly download and activate the identical modpack and version set.
 
-- **Official Mod Portal Integration:**
-  - Indexes 23,000+ Factorio mods from the official portal with local disk caching for instant search and filtering.
-  - Search by mod name, title, author, summary, or keyword.
-  - Filter by **Factorio version** (e.g. `2.0 (Space Age)` vs `1.1`), categories, and sort by most downloaded, top rated, or recently updated.
-  - Rich mod details modal featuring complete Markdown descriptions, changelogs, release history, and dependency trees.
+- ⚡ **High-Speed re146 R2 Mirror Downloader:**
+  - Downloads mod zip archives directly from the Cloudflare R2 storage mirror (`https://mods-storage.re146.dev/`).
+  - **No login tokens required** — mods download immediately without needing Factorio portal credentials.
+  - Automatic retry, SHA1 checksum verification, and real-time progress tracking with transfer speeds.
 
-- **re146 High-Speed R2 Mirror Downloader:**
-  - Downloads mod zip archives directly from `https://mods-storage.re146.dev/{name}/{version}.zip`.
-  - Automatic retry, SHA1 verification, and real-time Server-Sent Events (SSE) progress tracking with speeds and percentage bars.
+- 🧩 **Deep Dependency Resolution:**
+  - Full support for Factorio dependency rules (`base >= 2.0.0`, optional `?`, hidden `(?)`, incompatible `!`, and load order `~`).
+  - When installing a mod, missing prerequisites are automatically resolved and installed in topological order.
+  - Warns about missing requirements or mod conflicts before you launch.
 
-- **Smart Dependency Resolution:**
-  - Automatically parses Factorio dependency rules (`base >= 2.0.0`, optional `?`, hidden `(?)`, incompatible `!`, and load order `~`).
-  - When installing a mod, missing required dependencies are resolved and downloaded automatically in topological order.
-  - Warns about conflicting or incompatible mods before launching.
+- 🪐 **Factorio 2.0 & Space Age Ready:**
+  - Native support for Factorio 2.0 expansion mods, new surface types, and legacy 1.1 backward-compatibility filtering.
 
-- **Factorio Game Launcher Integration:**
-  - **Start Modded:** Launches Factorio with `--mod-directory "<Profile_Folder>"` so Factorio loads cleanly with the active profile without altering your main game files.
-  - **Start Vanilla:** Launches Factorio cleanly without mods.
-  - **Sync to Game Directory:** Copies the active profile's mods and `mod-list.json` directly into `%APPDATA%\Factorio\mods`, so launching Factorio from Steam also runs your active profile.
+- 🚀 **Flexible Game Launcher Integration:**
+  - **Start Modded:** Launches Factorio with `--mod-directory "<Profile_Folder>"` so Factorio loads cleanly with the selected profile without touching your default game files.
+  - **Start Vanilla:** Launches the unmodded base game cleanly in one click.
+  - **Sync to Game Directory:** Copies the active profile's mods and `mod-list.json` directly into `%APPDATA%\Factorio\mods`, allowing you to launch from Steam while using your chosen profile.
 
 ---
 
 ## How to Run & Build
 
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- npm or yarn
+
 ### Development Mode (Electron + Vite Hot Reload)
 ```bash
+# Clone the repository
+git clone https://github.com/TheDragonSoft/foundry-mod-manager.git
+cd foundry-mod-manager
+
+# Install dependencies
 npm install
+
+# Start in development mode with hot reloading
 npm run dev
 ```
 
-### Build Distribution Binaries (Windows Portable & Installer)
+### Build Distribution Binaries
 ```bash
+# Build production bundle and package Windows installer & portable binaries
 npm run electron:dist
 ```
-This will compile the frontend with Vite and package the application using `electron-builder` into the `release/` directory:
-- **Portable Executable:** `release/Foundry 1.0.0.exe`
-- **Windows NSIS Installer:** `release/Foundry Setup 1.0.0.exe`
+
+Output binaries will be placed in the `release/` directory:
+- **Installer:** `release/Foundry Setup 1.0.0.exe`
+- **Portable:** `release/Foundry 1.0.0.exe`
 - **Unpacked Folder:** `release/win-unpacked/Foundry.exe`
 
 ---
@@ -57,33 +113,44 @@ This will compile the frontend with Vite and package the application using `elec
 ## Project Architecture
 
 ```
-Factorio Mod Manger/
-├── server/
-│   ├── services/
-│   │   ├── dependencyService.ts   # Factorio dependency parser and semver resolver
-│   │   ├── downloadService.ts     # re146 mirror streaming and recursive dependency downloader
-│   │   ├── factorioService.ts     # Game path auto-detection, CLI args, sync to AppData
-│   │   ├── modPortalService.ts    # Official portal catalog cache and search index
-│   │   └── profileService.ts      # Profile isolation, mod-list.json manager, code sharing
-│   └── index.ts                   # Express REST API & SSE real-time download stream
+foundry-mod-manager/
+├── assets/
+│   ├── logo.png                   # Minimalist application icon
+│   ├── screenshot-installed.png   # In-app screenshot of Installed view
+│   └── screenshot-discover.png    # In-app screenshot of Discover catalog
+├── electron/
+│   ├── main.ts                    # Electron main process & IPC handlers
+│   ├── preload.ts                 # Context bridge & secure API exposure
+│   └── services/
+│       ├── dependencyService.ts   # Factorio dependency parser & resolver
+│       ├── downloadService.ts     # re146 mirror streaming & downloader
+│       ├── factorioService.ts     # Game path auto-detection & CLI launcher
+│       ├── modPortalService.ts    # Mod portal API indexer & disk cache
+│       └── profileService.ts      # Profile isolation & code sharing
 ├── src/
 │   ├── components/
-│   │   ├── DownloadBar.tsx        # Floating real-time download progress bar
+│   │   ├── ChangelogModal.tsx     # Mod changelog reader
+│   │   ├── ConfirmModal.tsx       # Deletion & sync confirmations
+│   │   ├── DownloadBar.tsx        # Floating real-time download bar
 │   │   ├── InstalledView.tsx      # Installed mods list, toggles, updates
-│   │   ├── ModDetailsModal.tsx    # Mod drawer with Markdown readme, changelog, dependencies
-│   │   ├── OnlineView.tsx         # Mod portal catalog browser, search, filters
-│   │   ├── ProfileModal.tsx       # Profile manager, code import/export
-│   │   ├── SettingsModal.tsx      # Executable path, mirror URL, launch settings
-│   │   └── Sidebar.tsx            # Profile switcher, launcher buttons, navigation
+│   │   ├── OnlineView.tsx         # Mod portal catalog browser & filters
+│   │   ├── ProfileModal.tsx       # Profile manager & code import/export
+│   │   ├── SettingsModal.tsx      # Executable path, mirror URL, launcher settings
+│   │   ├── Sidebar.tsx            # Navigation, categories, load-order status
+│   │   └── Topbar.tsx             # Profile selector, search bar, launch buttons
 │   ├── services/
-│   │   └── api.ts                 # Frontend API client
+│   │   └── api.ts                 # Electron IPC frontend client
 │   ├── types/
 │   │   └── index.ts               # Shared TypeScript interfaces
-│   ├── App.tsx                    # Main layout & view orchestrator
+│   ├── App.tsx                    # Main layout orchestrator
 │   └── index.css                  # Factorio industrial dark theme
-├── electron/
-│   ├── main.ts                    # Electron window wrapper
-│   └── preload.ts                 # Electron preload bridge
-├── start.bat                      # 1-click Windows launcher
-└── package.json
+├── electron-builder.yml           # Packaging configuration
+├── package.json
+└── README.md
 ```
+
+---
+
+## License
+
+Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for more details.

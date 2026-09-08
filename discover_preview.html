@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Foundry — Mod Portal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:        #17140f;
+    --panel:      #1e1a13;
+    --panel-2:    #251f16;
+    --raised:     #2c2419;
+    --line:       #3a3122;
+    --line-soft:  #2a2419;
+    --text:       #ece3d2;
+    --text-dim:   #b5a995;
+    --text-faint: #9e927c;
+    --copper:     #e0954a;
+    --copper-dim: #7a5227;
+    --copper-glow: rgba(224,149,74,0.16);
+    --good:       #8faa63;
+    --good-bg:    rgba(143,170,99,0.12);
+    --warn:       #d9a441;
+    --warn-bg:    rgba(217,164,65,0.12);
+    --bad:        #c15a3f;
+    --bad-bg:     rgba(193,90,63,0.12);
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; height:100%; }
+  body{
+    background:var(--ink);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      linear-gradient(var(--line-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+    background-size:64px 64px;
+    background-attachment:fixed;
+    background-position:-1px -1px;
+  }
+  ::selection{ background:var(--copper-dim); color:var(--text); }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+  .slab{ font-family:'Zilla Slab',serif; }
+
+  a{ color:inherit; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  .app{
+    display:grid;
+    grid-template-columns: 232px 1fr;
+    grid-template-rows: 60px 1fr;
+    grid-template-areas:
+      "brand topbar"
+      "side  main";
+    height:100vh;
+    max-width:1440px;
+    margin:0 auto;
+  }
+
+  .brand{
+    grid-area:brand;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:0 20px;
+    border-bottom:1px solid var(--line);
+    border-right:1px solid var(--line);
+  }
+  .brand-mark{
+    width:26px; height:26px; flex:none;
+  }
+  .brand-name{
+    font-family:'Zilla Slab',serif;
+    font-weight:700;
+    font-size:18px;
+    letter-spacing:0.02em;
+    color:var(--text);
+  }
+
+  .topbar{
+    grid-area:topbar;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:0 24px;
+    border-bottom:1px solid var(--line);
+  }
+  .profile-pill{
+    display:flex; align-items:center; gap:10px;
+    padding:7px 12px 7px 8px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:7px;
+    font-size:13px;
+    white-space:nowrap;
+  }
+  .profile-pill .dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--good);
+    box-shadow:0 0 0 3px var(--good-bg);
+  }
+  .profile-pill .name{ font-weight:600; }
+  .profile-pill .chev{ color:var(--text-faint); margin-left:2px; font-size:11px; }
+
+  .search{
+    flex:1;
+    max-width:440px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 12px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:7px;
+    color:var(--text-dim);
+  }
+  .search input{
+    background:none; border:none; outline:none; color:var(--text);
+    font-size:13px; width:100%; font-family:inherit;
+  }
+  .search input::placeholder{ color:var(--text-faint); }
+  .search kbd{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--text-faint);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:1px 5px;
+  }
+
+  .topbar-actions{
+    margin-left:auto;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+
+  .btn{
+    border-radius:7px;
+    padding:8px 14px;
+    font-size:13px;
+    font-weight:600;
+    border:1px solid var(--line);
+    background:var(--panel-2);
+    color:var(--text);
+    transition:border-color .12s ease, background .12s ease;
+  }
+  .btn:hover{ border-color:var(--text-faint); }
+  .btn-updates{ position:relative; }
+  .btn-updates .count{
+    display:inline-block;
+    margin-left:6px;
+    background:var(--warn-bg);
+    color:var(--warn);
+    border-radius:10px;
+    padding:1px 6px;
+    font-size:11px;
+    font-weight:700;
+  }
+  .btn-primary{
+    background:var(--copper);
+    border-color:var(--copper);
+    color:#231607;
+  }
+  .btn-primary:hover{ background:#e8a15c; border-color:#e8a15c; }
+
+  .side{
+    grid-area:side;
+    border-right:1px solid var(--line);
+    display:flex;
+    flex-direction:column;
+    height:100%;
+    overflow:hidden;
+    background:var(--ink);
+  }
+  .side-scroll{
+    flex:1;
+    overflow-y:auto;
+    padding:18px 14px 16px;
+    min-height:0;
+  }
+  .side-section{ margin-bottom:22px; }
+  .side-label{
+    font-size:11px;
+    font-weight:600;
+    color:var(--text-faint);
+    letter-spacing:0.02em;
+    padding:0 8px 8px;
+  }
+  .cat{
+    display:flex; align-items:center; gap:10px;
+    padding:8px 8px;
+    border-radius:6px;
+    color:var(--text-dim);
+    font-size:13px;
+    cursor:pointer;
+    transition:background .1s ease, color .1s ease;
+  }
+  .cat:hover{ background:var(--panel); color:var(--text); }
+  .cat.active{ background:var(--raised); color:var(--text); font-weight:600; }
+  .cat svg{ width:16px; height:16px; flex:none; opacity:0.8; }
+  .cat .n{
+    margin-left:auto;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--text-dim);
+    font-weight:500;
+  }
+  .side-divider{ height:1px; background:var(--line); margin:14px 8px; }
+  .tags-row{ display:flex; flex-wrap:wrap; gap:8px 6px; padding:0 6px; }
+  .tag-chip{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    color:#c8beab;
+    padding:4px 9px;
+    border-radius:5px;
+    cursor:pointer;
+    line-height:1.2;
+    transition:border-color .12s ease;
+  }
+  .tag-chip:hover{ border-color:var(--copper); color:var(--text); }
+  .tag-chip.active{ border-color:var(--copper); background:var(--copper-glow); color:var(--copper); }
+
+  .side-footer{
+    flex-shrink:0;
+    padding:14px 16px;
+    border-top:1px solid var(--line);
+    background:var(--ink);
+  }
+  .integrity{ display:flex; justify-content:space-between; font-size:12px; margin-bottom:8px;}
+  .integrity span{ color:var(--text-faint); }
+  .integrity b{ color:var(--good); font-weight:600; }
+  .bar{ height:3px; background:var(--line); border-radius:2px; overflow:hidden; }
+  .bar i{ display:block; height:100%; width:100%; background:var(--good); }
+
+  .main{
+    grid-area:main;
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+    height:100%;
+    overflow:hidden;
+  }
+
+  .tabs{
+    display:flex;
+    gap:24px;
+    padding:0 24px;
+    border-bottom:1px solid var(--line);
+    background:var(--ink);
+  }
+  .tab{
+    padding:14px 2px 12px;
+    color:var(--text-dim);
+    font-weight:600;
+    font-size:13.5px;
+    border-bottom:2px solid transparent;
+    cursor:pointer;
+    display:flex; align-items:center; gap:8px;
+    transition:color .12s ease;
+  }
+  .tab:hover{ color:var(--text); }
+  .tab.active{ color:var(--copper); border-bottom-color:var(--copper); }
+  .tab .n{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    padding:1px 6px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:10px;
+    color:var(--text-dim);
+    font-weight:500;
+  }
+
+  .list-header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 24px;
+    border-bottom:1px solid var(--line);
+    font-size:12.5px;
+    color:var(--text-faint);
+    background:rgba(23,20,15,0.6);
+  }
+  .list-header select{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    color:var(--text);
+    padding:5px 10px;
+    border-radius:6px;
+    font-size:12px;
+    font-family:inherit;
+    outline:none;
+  }
+
+  .content-row{
+    display:flex;
+    flex:1;
+    min-height:0;
+    overflow:hidden;
+  }
+
+  .mod-list{
+    flex:1;
+    overflow-y:auto;
+    min-width:0;
+  }
+
+  .mod{
+    display:grid;
+    grid-template-columns: 44px 1fr 140px 110px 75px 100px;
+    align-items:center;
+    gap:14px;
+    padding:14px 24px;
+    border-bottom:1px solid var(--line-soft);
+    cursor:pointer;
+    transition:background .1s ease;
+  }
+  .mod:hover{ background:rgba(37,31,22,0.4); }
+  .mod.selected{ background:var(--panel-2); border-left:3px solid var(--copper); }
+
+  .mod-icon{
+    width:42px; height:42px; border-radius:8px;
+    background:var(--panel); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--copper);
+  }
+  .mod-icon svg{ width:22px; height:22px; }
+
+  .mod-main{ min-width:0; }
+  .row1{ display:flex; align-items:center; gap:8px; flex-wrap:nowrap; }
+  .mod-name{
+    font-weight:700;
+    font-size:15px;
+    letter-spacing:0.01em;
+    color:var(--text);
+    white-space:nowrap;
+  }
+  .mod-badge{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    padding:1px 6px;
+    border-radius:4px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    color:var(--text-dim);
+    flex-shrink:0;
+  }
+  .mod-badge.overhaul{ border-color:var(--copper-dim); color:var(--copper); }
+  .mod-badge.spaceage{ border-color:#8faa63; color:#8faa63; }
+  .mod-desc{
+    font-size:12.5px;
+    color:var(--text-dim);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    margin-top:3px;
+  }
+
+  .mod-author{
+    font-size:12px; color:var(--text-faint); text-align:right; white-space:nowrap;
+    max-width:140px; overflow:hidden; text-overflow:ellipsis;
+  }
+  .mod-author b{ color:var(--text-dim); font-weight:500; }
+
+  .mod-stat{
+    font-size:12px; color:var(--text-dim); text-align:right; white-space:nowrap;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .mod-version{
+    font-size:12px; color:var(--text-faint); font-family:'IBM Plex Mono',monospace; text-align:right;
+  }
+
+  .btn-install{
+    padding:6px 14px;
+    font-size:12px;
+    font-weight:600;
+    border-radius:6px;
+    background:var(--copper);
+    border:1px solid var(--copper);
+    color:#231607;
+    cursor:pointer;
+    text-align:center;
+    transition:background .12s ease;
+  }
+  .btn-install:hover{ background:#e8a15c; }
+  .btn-installed{
+    padding:6px 14px;
+    font-size:12px;
+    font-weight:600;
+    border-radius:6px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    color:var(--good);
+    cursor:default;
+    text-align:center;
+  }
+
+  .drawer{
+    width:360px;
+    flex:none;
+    border-left:1px solid var(--line);
+    padding:22px;
+    overflow-y:auto;
+    background:var(--ink);
+  }
+  .drawer-head{ display:flex; gap:14px; align-items:flex-start; margin-bottom:16px;}
+  .drawer-icon{
+    width:52px; height:52px; border-radius:10px;
+    background:var(--raised); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; flex:none;
+    color:var(--copper);
+  }
+  .drawer-icon svg{ width:26px; height:26px; }
+  .drawer-title{ font-family:'Zilla Slab',serif; font-weight:700; font-size:20px; margin-bottom:3px; color:var(--text);}
+  .drawer-by{ font-size:12.5px; color:var(--text-dim); }
+  .drawer-by b{ color:var(--copper); font-weight:600; }
+
+  .drawer-desc{ font-size:13px; color:var(--text-dim); margin:14px 0 18px; line-height:1.6;}
+  .drawer-actions{ display:flex; gap:8px; margin-bottom:20px; }
+  .drawer-actions .btn{ flex:1; text-align:center; }
+
+  .drawer-section{ margin-bottom:20px; }
+  .drawer-section h4{
+    font-size:11px; font-weight:600; color:var(--text-faint);
+    letter-spacing:0.02em; margin:0 0 10px;
+  }
+  .kv{ display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px solid var(--line-soft); }
+  .kv:last-child{ border-bottom:none; }
+  .kv span:first-child{ color:var(--text-dim); }
+  .kv span:last-child{ font-family:'IBM Plex Mono',monospace; font-size:12px; }
+  .kv .ok{ color:var(--good); }
+
+  ::-webkit-scrollbar{ width:10px; height:10px; }
+  ::-webkit-scrollbar-thumb{ background:var(--raised); border-radius:5px; border:2px solid var(--ink);}
+  ::-webkit-scrollbar-track{ background:transparent; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="brand">
+    <img src="assets/logo.png" class="brand-mark" style="width:28px; height:28px; border-radius:6px; object-fit:cover;" alt="Foundry">
+    <span class="brand-name">Foundry</span>
+  </div>
+
+  <div class="topbar">
+    <div class="profile-pill">
+      <span class="dot"></span>
+      <span class="name">Nauvis Prime</span>
+      <span class="mono" style="color:var(--text-dim); font-size:11.5px;">(38/42 enabled)</span>
+      <span class="chev">&#9662;</span>
+    </div>
+
+    <div class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input placeholder="Search 23,418 Factorio mods by name, tag, or author…">
+      <kbd>&#8984;K</kbd>
+    </div>
+
+    <div class="topbar-actions">
+      <button class="btn btn-updates">Updates <span class="count">3</span></button>
+      <button class="btn btn-primary">&#9654; Launch Factorio</button>
+    </div>
+  </div>
+
+  <div class="side">
+    <div class="side-scroll">
+      <div class="side-section">
+        <div class="side-label">Categories</div>
+        <div class="cat active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          All categories <span class="n">23.4k</span>
+        </div>
+        <div class="cat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 2v20"/></svg>
+          Content &amp; Items <span class="n">4.2k</span>
+        </div>
+        <div class="cat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><ellipse cx="12" cy="12" rx="9" ry="3.5"/></svg>
+          Overhauls &amp; SE <span class="n">840</span>
+        </div>
+        <div class="cat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.5 5 5.5.8-4 4 1 5.5L12 15l-5 2.3 1-5.5-4-4 5.5-.8z"/></svg>
+          Quality of life <span class="n">6.1k</span>
+        </div>
+        <div class="cat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="10" width="14" height="6" rx="1"/><circle cx="6" cy="18" r="1.6"/><circle cx="14" cy="18" r="1.6"/><path d="M16 12h4l2 3v1h-6"/></svg>
+          Logistics &amp; Trains <span class="n">2.9k</span>
+        </div>
+        <div class="cat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l7 4v6c0 5-3 8-7 10-4-2-7-5-7-10V6z"/></svg>
+          Combat &amp; Defense <span class="n">1.8k</span>
+        </div>
+      </div>
+
+      <div class="side-divider"></div>
+
+      <div class="side-section">
+        <div class="side-label">Filters</div>
+        <div class="tags-row">
+          <span class="tag-chip active">space-age</span>
+          <span class="tag-chip">2.0-ready</span>
+          <span class="tag-chip">megabase</span>
+          <span class="tag-chip">multiplayer</span>
+          <span class="tag-chip">calculator</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-footer">
+      <div class="integrity"><span>Portal API Cache</span><b>Online</b></div>
+      <div class="bar"><i></i></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="tabs">
+      <div class="tab">Installed <span class="n">42</span></div>
+      <div class="tab active">Discover <span class="n">23.4k</span></div>
+      <div class="tab">Profiles</div>
+      <div class="tab">Dependencies</div>
+    </div>
+
+    <div class="list-header">
+      <span>Game Version:</span>
+      <select>
+        <option>Factorio 2.0 (Space Age)</option>
+        <option>Factorio 1.1 (Legacy)</option>
+        <option>All versions</option>
+      </select>
+
+      <span style="margin-left:12px;">Sort:</span>
+      <select>
+        <option>Most downloaded</option>
+        <option>Highest rated</option>
+        <option>Recently updated</option>
+        <option>Name (A-Z)</option>
+      </select>
+
+      <span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:11.5px;">Showing 1–30 of 23,418 mods</span>
+    </div>
+
+    <div class="content-row">
+      <div class="mod-list">
+
+        <div class="mod selected">
+          <div class="mod-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></div>
+          <div class="mod-main">
+            <div class="row1">
+              <span class="mod-name">Factory Planner</span>
+              <span class="mod-badge spaceage">2.0 ready</span>
+              <span class="mod-badge">Calculator</span>
+            </div>
+            <div class="mod-desc">Plan your factory production chains, machine counts, and module ratios with Space Age multi-surface support.</div>
+          </div>
+          <div class="mod-author">by <b>Therenas</b></div>
+          <div class="mod-stat">&#9733; 4.9 &middot; 1.8M dl</div>
+          <div class="mod-version">v1.2.14</div>
+          <button class="btn-install">+ Install</button>
+        </div>
+
+        <div class="mod">
+          <div class="mod-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h5"/></svg></div>
+          <div class="mod-main">
+            <div class="row1">
+              <span class="mod-name">Rate Calculator</span>
+              <span class="mod-badge spaceage">2.0 ready</span>
+            </div>
+            <div class="mod-desc">Quickly calculate production and consumption rates of selections of machines with interactive tooltips.</div>
+          </div>
+          <div class="mod-author">by <b>Raiguard</b></div>
+          <div class="mod-stat">&#9733; 4.9 &middot; 1.4M dl</div>
+          <div class="mod-version">v3.3.4</div>
+          <button class="btn-install">+ Install</button>
+        </div>
+
+        <div class="mod">
+          <div class="mod-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><ellipse cx="12" cy="12" rx="9" ry="3.5"/></svg></div>
+          <div class="mod-main">
+            <div class="row1">
+              <span class="mod-name">Space Exploration</span>
+              <span class="mod-badge overhaul">Overhaul</span>
+            </div>
+            <div class="mod-desc">Build cargo rockets, launch orbital stations, explore planets and asteroids with deep research tech trees.</div>
+          </div>
+          <div class="mod-author">by <b>Earendel</b></div>
+          <div class="mod-stat">&#9733; 4.9 &middot; 2.1M dl</div>
+          <div class="mod-version">v0.6.142</div>
+          <button class="btn-installed">Installed &#10003;</button>
+        </div>
+
+        <div class="mod">
+          <div class="mod-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="9" width="14" height="7" rx="1"/><circle cx="6" cy="18" r="1.6"/><circle cx="12" cy="18" r="1.6"/><path d="M16 11h4l2 3v2h-6"/></svg></div>
+          <div class="mod-main">
+            <div class="row1">
+              <span class="mod-name">CyberSyn Logistics</span>
+              <span class="mod-badge spaceage">2.0 ready</span>
+            </div>
+            <div class="mod-desc">A smarter, lighter, and more performant alternative to LTN for complex multi-station railway logistics networks.</div>
+          </div>
+          <div class="mod-author">by <b>Asobi</b></div>
+          <div class="mod-stat">&#9733; 4.8 &middot; 520K dl</div>
+          <div class="mod-version">v1.4.2</div>
+          <button class="btn-install">+ Install</button>
+        </div>
+
+        <div class="mod">
+          <div class="mod-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12c3-6 13-6 16 0-3 6-13 6-16 0z"/><circle cx="12" cy="12" r="2"/></svg></div>
+          <div class="mod-main">
+            <div class="row1">
+              <span class="mod-name">Squeak Through 2</span>
+              <span class="mod-badge spaceage">2.0 ready</span>
+              <span class="mod-badge">QoL</span>
+            </div>
+            <div class="mod-desc">Lets you walk between closely packed pipes, belts, and solar arrays without collision obstructions.</div>
+          </div>
+          <div class="mod-author">by <b>Supercheese</b></div>
+          <div class="mod-stat">&#9733; 4.9 &middot; 3.4M dl</div>
+          <div class="mod-version">v0.2.1</div>
+          <button class="btn-installed">Installed &#10003;</button>
+        </div>
+
+        <div class="mod">
+          <div class="mod-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20M2 12h20M6 6l12 12M18 6L6 18"/></svg></div>
+          <div class="mod-main">
+            <div class="row1">
+              <span class="mod-name">Krastorio 2</span>
+              <span class="mod-badge overhaul">Overhaul</span>
+            </div>
+            <div class="mod-desc">Extensive late-game energy systems, matter transformation, and deeply rewarding production chains.</div>
+          </div>
+          <div class="mod-author">by <b>Linver, Raiguard</b></div>
+          <div class="mod-stat">&#9733; 4.9 &middot; 1.9M dl</div>
+          <div class="mod-version">v1.3.24</div>
+          <button class="btn-installed">Installed &#10003;</button>
+        </div>
+
+        <div class="mod">
+          <div class="mod-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M12 9v6"/></svg></div>
+          <div class="mod-main">
+            <div class="row1">
+              <span class="mod-name">Auto Deconstruct</span>
+              <span class="mod-badge spaceage">2.0 ready</span>
+              <span class="mod-badge">Automation</span>
+            </div>
+            <div class="mod-desc">Marks mining drills automatically for deconstruction when their resource deposit runs dry.</div>
+          </div>
+          <div class="mod-author">by <b>mindmix</b></div>
+          <div class="mod-stat">&#9733; 4.9 &middot; 2.6M dl</div>
+          <div class="mod-version">v0.5.2</div>
+          <button class="btn-install">+ Install</button>
+        </div>
+
+      </div>
+
+      <div class="drawer">
+        <div class="drawer-head">
+          <div class="drawer-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></div>
+          <div>
+            <div class="drawer-title">Factory Planner</div>
+            <div class="drawer-by">by <b>Therenas</b> &middot; v1.2.14</div>
+          </div>
+        </div>
+
+        <p class="drawer-desc">An in-game planner that calculates raw resource requirements, machine counts, power consumption, and recipe ratios for complex factories.</p>
+
+        <div class="drawer-actions">
+          <button class="btn btn-primary" style="flex:1;">+ Install Mod (4.2 MB)</button>
+        </div>
+
+        <div class="drawer-section">
+          <h4>Required Dependencies</h4>
+          <div class="kv"><span>base</span><span class="ok">&ge; 2.0.0 (compatible)</span></div>
+          <div class="kv"><span>flib</span><span class="ok">&ge; 0.14.0 (auto-resolves)</span></div>
+        </div>
+
+        <div class="drawer-section">
+          <h4>Mod Portal Metadata</h4>
+          <div class="kv"><span>Factorio Version</span><span>2.0.x (Space Age)</span></div>
+          <div class="kv"><span>License</span><span>GNU GPLv3</span></div>
+          <div class="kv"><span>Total Downloads</span><span>1,842,910</span></div>
+          <div class="kv"><span>Fast Mirror</span><span class="ok">re146 R2 (Cached)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

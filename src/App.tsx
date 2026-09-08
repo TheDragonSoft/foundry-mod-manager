@@ -313,11 +313,7 @@ export const App: React.FC = () => {
 
       {/* Brand Top-Left Cell */}
       <div className="brand">
-        <svg className="brand-mark" viewBox="0 0 24 24" fill="none">
-          <path d="M12 2 L21 7 V17 L12 22 L3 17 V7 Z" stroke="#e0954a" strokeWidth="1.4" />
-          <path d="M12 2 V22 M3 7 L21 17 M21 7 L3 17" stroke="#e0954a" strokeWidth="1" opacity="0.4" />
-          <circle cx="12" cy="12" r="3" fill="#e0954a" />
-        </svg>
+        <img src="/icon.png" className="brand-mark" style={{ width: 28, height: 28, borderRadius: 6, objectFit: 'cover' }} alt="Foundry" />
         <span className="brand-name">Foundry</span>
       </div>
 
