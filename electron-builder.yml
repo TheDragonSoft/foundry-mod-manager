@@ -1,0 +1,28 @@
+appId: com.foundry.modmanager
+productName: Foundry
+copyright: Copyright © 2026
+directories:
+  output: release
+files:
+  - dist/**/*
+  - dist-electron/**/*
+  - build/icon.ico
+  - build/icon.png
+  - package.json
+win:
+  icon: build/icon.ico
+  target:
+    - target: dir
+      arch:
+        - x64
+    - target: nsis
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true

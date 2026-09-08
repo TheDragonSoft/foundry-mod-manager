@@ -1,0 +1,56 @@
+{
+  "name": "factorio-mod-manager",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Factorio Mod Manager with r2modman-style features, official Mod Portal metadata, and re146 R2 mirror downloads",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "electron:dev": "vite",
+    "electron:build": "vite build && electron-builder --dir",
+    "electron:dist": "vite build && electron-builder"
+  },
+  "keywords": [
+    "factorio",
+    "mod-manager",
+    "r2modman",
+    "factorio-mods"
+  ],
+  "author": "TheDragonSoft",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TheDragonSoft/foundry-mod-manager.git"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.16.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-markdown": "^10.0.0",
+    "remark-gfm": "^4.0.0",
+    "tailwind-merge": "^3.0.2"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.5.7",
+    "@types/node": "^22.13.4",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "electron": "^34.2.0",
+    "electron-builder": "^26.15.3",
+    "postcss": "^8.5.2",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3",
+    "vite": "^6.1.0",
+    "vite-plugin-electron": "^0.28.0",
+    "vite-plugin-electron-renderer": "^0.14.6"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true,
+    "electron": true
+  }
+}
