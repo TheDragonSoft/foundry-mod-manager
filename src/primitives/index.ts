@@ -10,3 +10,4 @@ export { Chip } from './Chip';
 export { Kbd } from './Kbd';
 export { EmptyState } from './EmptyState';
 export { Tooltip } from './Tooltip';
+export { SectionHeader } from './SectionHeader';
