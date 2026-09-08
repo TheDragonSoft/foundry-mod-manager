@@ -1,15 +1,13 @@
-# Dependencies
-node_modules/
-
-# Build outputs
+# Build artifacts
 dist/
 dist-electron/
 build/
 release/
-*.js.map
-*.ts.map
 
-# Environment variables
+# Dependencies
+node_modules/
+
+# Environment
 .env
 .env.local
 *.env.*
@@ -17,35 +15,31 @@ release/
 # Editors
 .vscode/
 .idea/
-*.swp
-*.swo
-
-# Logs
-*.log
-
-# Coverage
-coverage/
-htmlcov/
-*.coverage
 
 # Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.Python
-*.so
-.PyCharm
-.pytest_cache/
-.mypy_cache/
 
-# Temporary files
-*.tmp
-*~
+# Logs
+*.log
+
+# OS
 .DS_Store
 Thumbs.db
 
-# Compressed files
+# Coverage
+coverage/
+htmlcov/
+.coverage
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+
+# Archives
 *.zip
 *.gz
 *.tar
