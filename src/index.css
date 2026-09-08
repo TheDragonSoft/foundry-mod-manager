@@ -2,27 +2,94 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ====================================================================
+   DESIGN TOKENS — FOUNDRY REFACTOR (Spec §1)
+   Warm graphite surfaces, copper accent, WCAG AA compliant text
+   ==================================================================== */
 :root {
-  --ink:        #17140f;
-  --panel:      #1e1a13;
-  --panel-2:    #251f16;
-  --raised:     #2c2419;
-  --line:       #3a3122;
-  --line-soft:  #2a2419;
-  --text:       #ece3d2;
-  --text-dim:   #b5a995;
-  --text-faint: #9e927c;
-  --copper:     #e0954a;
-  --copper-dim: #7a5227;
-  --copper-glow: rgba(224,149,74,0.16);
-  --good:       #8faa63;
-  --good-bg:    rgba(143,170,99,0.12);
-  --warn:       #d9a441;
-  --warn-bg:    rgba(217,164,65,0.12);
-  --bad:        #c15a3f;
-  --bad-bg:     rgba(193,90,63,0.12);
+  /* §1.1 SURFACES (warm graphite, 3 elevation steps + hover) */
+  --bg-app: #161210;
+  --bg-panel: #1C1713;
+  --bg-raised: #241D17;
+  --bg-hover: #2A221B;
+  --bg-active: #322820;
+  --border-subtle: #2E2620;
+  --border-strong: #3D332A;
+  --overlay: rgba(10, 8, 6, 0.62);
+  --backdrop-blur: 8px;
+
+  /* §1.2 TEXT (all pass WCAG AA on intended surfaces) */
+  --text-1: #F2EAE0;      /* primary, ≥12:1 on bg-app */
+  --text-2: #C9BBAB;      /* secondary, ≥7:1 */
+  --text-3: #9A8D7E;      /* muted/meta, ≥4.5:1 */
+  --text-disabled: #6E6459;
+  --text-on-accent: #241503;
+
+  /* §1.3 ACCENT + SEMANTIC */
+  --accent: #E8964A;
+  --accent-hover: #F2A65A;
+  --accent-pressed: #D6853B;
+  --accent-subtle: rgba(232, 150, 74, 0.14);
+  --success: #8CC474;
+  --success-subtle: rgba(140, 196, 116, 0.14);
+  --warn: #E0B050;
+  --warn-subtle: rgba(224, 176, 80, 0.14);
+  --danger: #E07A6A;
+  --danger-subtle: rgba(224, 122, 106, 0.14);
+
+  /* §1.5 SPACING (8pt grid) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* Control heights */
+  --h-sm: 28px;
+  --h-md: 36px;
+  --h-lg: 44px;
+  --row-height: 56px;
+
+  /* §1.6 RADII */
+  --r-sm: 6px;   /* chips, kbd, badges */
+  --r-md: 8px;   /* controls, inputs, buttons */
+  --r-lg: 12px;  /* cards, modals, rail */
+
+  /* §1.8 MOTION */
+  --t-fast: 140ms ease-out;
+  --t-med: 200ms ease;
+  --t-slow: 280ms;
+
+  /* §1.9 FOCUS */
+  --focus-ring: 2px solid var(--accent);
+  --focus-offset: 2px;
+
+  /* Legacy token aliases for gradual migration (DEPRECATED — remove after refactor) */
+  --ink: var(--bg-app);
+  --panel: var(--bg-panel);
+  --panel-2: var(--bg-raised);
+  --raised: var(--bg-raised);
+  --line: var(--border-subtle);
+  --line-soft: var(--border-strong);
+  --text: var(--text-1);
+  --text-dim: var(--text-2);
+  --text-faint: var(--text-3);
+  --copper: var(--accent);
+  --copper-dim: var(--accent-pressed);
+  --copper-glow: var(--accent-subtle);
+  --good: var(--success);
+  --good-bg: var(--success-subtle);
+  --warn: var(--warn);
+  --warn-bg: var(--warn-subtle);
+  --bad: var(--danger);
+  --bad-bg: var(--danger-subtle);
 }
 
+/* ====================================================================
+   BASE STYLES
+   ==================================================================== */
 * {
   box-sizing: border-box;
 }
@@ -35,41 +102,143 @@ html, body {
 }
 
 body {
-  background: var(--ink);
-  color: var(--text);
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
+  background: var(--bg-app);
+  color: var(--text-1);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 13px;  /* §1.4 body-base = 13px */
+  line-height: 1.45;
   -webkit-font-smoothing: antialiased;
-  background-image:
-    linear-gradient(var(--line-soft) 1px, transparent 1px),
-    linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
-  background-size: 64px 64px;
-  background-attachment: fixed;
-  background-position: -1px -1px;
+  -moz-osx-font-smoothing: grayscale;
   user-select: none;
 }
 
 ::selection {
-  background: var(--copper-dim);
-  color: var(--text);
+  background: var(--accent-subtle);
+  color: var(--text-1);
+}
+
+/* Typography scale per §1.4 */
+.text-overline {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.text-caption {
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.text-body {
+  font-size: 13px;
+  color: var(--text-1);
+}
+
+.text-body-lg {
+  font-size: 14px;
+  color: var(--text-1);
+}
+
+.text-section {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.text-page {
+  font-size: 20px;
+  font-weight: 650;
+  color: var(--text-1);
 }
 
 .mono {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'IBM Plex Mono', 'ui-monospace', SFMono-Regular, monospace;
 }
 
-.slab {
-  font-family: 'Zilla Slab', serif;
-}
-
+/* Links */
 a {
   color: inherit;
+  text-decoration: none;
 }
 
+a:hover {
+  text-decoration: underline;
+}
+
+/* Buttons base */
 button {
   font-family: inherit;
   cursor: pointer;
+}
+
+/* ====================================================================
+   §1.10 SCROLLBARS — themed overlay scrollbars app-wide
+   ==================================================================== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+  border: 1px solid var(--bg-app);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-disabled);
+}
+
+/* Scrollbar gutter for list containers to prevent layout shift */
+.scrollbar-stable {
+  scrollbar-gutter: stable;
+}
+
+/* ====================================================================
+   §1.9 FOCUS RING — global :focus-visible treatment
+   ==================================================================== */
+:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible,
+[role="button"]:focus-visible,
+[role="tab"]:focus-visible,
+[role="option"]:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+/* Remove default outline for non-keyboard focus */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ====================================================================
+   REDUCED MOTION — wrap animations in media query per §1.8
+   ==================================================================== */
+@media (prefers-reduced-motion: no-preference) {
+  .motion-fast { transition: all var(--t-fast); }
+  .motion-med { transition: all var(--t-med); }
+  .motion-slow { transition: all var(--t-slow); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* ---------- Shell Grid ---------- */
