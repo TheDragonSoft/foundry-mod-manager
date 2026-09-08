@@ -1,54 +1,95 @@
 import React, { useMemo } from 'react';
-import { InstalledMod, ParsedDependency } from '../types';
+import { InstalledMod, ModItem, ParsedDependency } from '../types';
 import { Badge, IconButton, Button, Switch } from '../primitives';
 import { getThumbnailUrl } from '../utils/helpers';
 
-interface DetailRailProps {
-  mod: InstalledMod | null;
-  isOpen: boolean;
+export interface DetailRailProps {
+  mod?: (InstalledMod & { downloads_count?: number }) | null;
+  isOpen?: boolean;
   onClose: () => void;
-  onToggleMod: (name: string, enabled: boolean) => void;
-  onUninstallMod: (name: string) => void;
-  onUpdateMod: (name: string, targetVersion: string) => void;
+  onToggleMod?: (name: string, enabled: boolean) => void;
+  onUninstallMod?: (name: string) => void;
+  onUpdateMod?: (name: string, targetVersion: string) => void;
   onInstallMissingDep?: (name: string, version?: string) => void;
   onOpenChangelog?: (modName: string) => void;
-  mods: InstalledMod[];
+  mods?: InstalledMod[];
+  // Discover / Online props
+  modName?: string | null;
+  modDetail?: ModItem;
+  currentlySelectedSummary?: ModItem;
+  loading?: boolean;
+  selectedReleaseVersion?: string;
+  onReleaseVersionChange?: (version: string) => void;
+  installedMods?: InstalledMod[];
+  onInstallMod?: (modName: string, version?: string) => void;
+  installingModName?: string | null;
 }
 
 export const DetailRail: React.FC<DetailRailProps> = ({
-  mod,
-  isOpen,
+  mod: modProp,
+  isOpen: isOpenProp,
   onClose,
-  onToggleMod,
-  onUninstallMod,
-  onUpdateMod,
+  onToggleMod = () => {},
+  onUninstallMod = () => {},
+  onUpdateMod = () => {},
   onInstallMissingDep,
   onOpenChangelog,
-  mods,
+  mods = [],
+  modName,
+  modDetail,
+  currentlySelectedSummary,
+  loading = false,
+  selectedReleaseVersion,
+  onReleaseVersionChange,
+  installedMods = [],
+  onInstallMod,
+  installingModName,
 }) => {
+  const activeMods = mods.length > 0 ? mods : installedMods;
+  const isOpen = isOpenProp !== undefined ? isOpenProp : !!(modProp || modName);
+
+  const mod = useMemo(() => {
+    if (modProp) return modProp;
+    if (modDetail || currentlySelectedSummary) {
+      const summary = modDetail || currentlySelectedSummary!;
+      return {
+        name: summary.name,
+        title: summary.title,
+        author: summary.owner,
+        summary: summary.summary || '',
+        version: selectedReleaseVersion || summary.latest_release?.version || '—',
+        enabled: false,
+        fileName: '',
+        dependencies: (summary.latest_release?.info_json?.dependencies || []) as any,
+        downloads_count: summary.downloads_count,
+        thumbnail: summary.thumbnail,
+      } as InstalledMod & { downloads_count?: number };
+    }
+    return null;
+  }, [modProp, modDetail, currentlySelectedSummary, selectedReleaseVersion]);
+
   const dependencies = useMemo(() => {
     if (!mod?.dependencies) return [];
-    return mod.dependencies.map((depStr) => {
-      const raw = depStr.trim();
+    return mod.dependencies.map((dep: any) => {
+      const raw = typeof dep === 'string' ? dep.trim() : (dep.raw || dep.id || '');
       const regex = /^((?:)|(?:\?)|(?:\(\?\))|(?:!)|(?:~))(?:\s*)([a-zA-Z0-9_-]+)(?:\s*)((?:>=|<=|==|=|>|<)?)(?:\s*)([0-9]+(?:\.[0-9]+)*)?$/i;
-      const match = raw.match(regex);
-      const prefix = match ? match[1] : '';
-      const id = match ? match[2] : depStr;
-      const ineq = match ? (match[3] === '==' ? '=' : match[3] || '') : '';
-      const version = match ? match[4] || '' : '';
-      const isOptional = prefix === '?' || prefix === '(?)';
-      const isIncompat = prefix === '!';
+      const match = typeof raw === 'string' ? raw.match(regex) : null;
+      const prefix = match ? match[1] : (dep.type === 'optional' ? '?' : dep.type === 'incompatible' ? '!' : '');
+      const id = match ? match[2] : (dep.id || raw || '');
+      const ineq = match ? (match[3] === '==' ? '=' : match[3] || '') : (dep.ineq || '');
+      const version = match ? match[4] || '' : (dep.version || '');
+      const isOptional = prefix === '?' || prefix === '(?)' || dep.type === 'optional';
+      const isIncompat = prefix === '!' || dep.type === 'incompatible';
       
       // Check if dependency is satisfied
-      const installedMod = mods.find(m => m.name.toLowerCase() === id.toLowerCase());
+      const installedMod = activeMods.find(m => m.name.toLowerCase() === id.toLowerCase());
       let status: 'ok' | 'missing' | 'version-mismatch' = 'ok';
       
       if (isIncompat) {
-        status = installedMod ? 'missing' : 'ok'; // Incompatible mod should not be installed
+        status = installedMod ? 'missing' : 'ok';
       } else if (!installedMod) {
         status = isOptional ? 'ok' : 'missing';
       } else if (ineq && version) {
-        // Simple version comparison (could be more sophisticated)
         const [installedMajor, installedMinor] = installedMod.version.split('.').map(Number);
         const [requiredMajor, requiredMinor] = version.split('.').map(Number);
         
@@ -67,7 +108,7 @@ export const DetailRail: React.FC<DetailRailProps> = ({
       
       return { id, ineq, version, isOptional, isIncompat, raw, status, installed: !!installedMod };
     });
-  }, [mod, mods]);
+  }, [mod, activeMods]);
 
   if (!mod) {
     return null;

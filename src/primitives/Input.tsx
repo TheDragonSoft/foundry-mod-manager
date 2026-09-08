@@ -12,14 +12,14 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
  * - h36 (md), bg-panel, border-subtle, r-md, text-1
  * - placeholder text-disabled, focus ring §1.9
  */
-export const Input: React.FC<InputProps> = ({
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
   label,
   helperText,
   error = false,
   className,
   id,
   ...props
-}) => {
+}, ref) => {
   const inputId = id || `input-${Math.random().toString(36).slice(2)}`;
   
   return (
@@ -33,6 +33,7 @@ export const Input: React.FC<InputProps> = ({
         </label>
       )}
       <input
+        ref={ref}
         id={inputId}
         className={clsx(
           'h-md px-3 rounded-md border bg-bg-panel text-text-1',
@@ -54,4 +55,6 @@ export const Input: React.FC<InputProps> = ({
       )}
     </div>
   );
-};
+});
+
+Input.displayName = 'Input';

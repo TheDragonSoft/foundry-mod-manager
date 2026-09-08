@@ -180,8 +180,8 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
           Factorio{' '}
           <Select
             value={factorioVersion}
-            onChange={(e) => {
-              setFactorioVersion(e.target.value);
+            onChange={(val) => {
+              setFactorioVersion(val);
               setPage(1);
             }}
             options={versionOptions}
@@ -194,8 +194,8 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
             Sort
             <Select
               value={sortBy}
-              onChange={(e) => {
-                setSortBy(e.target.value as any);
+              onChange={(val) => {
+                setSortBy(val as any);
                 setPage(1);
               }}
               options={sortOptions}
@@ -231,24 +231,16 @@ export const DiscoverView: React.FC<DiscoverViewProps> = ({
               const isSelected = selectedModName?.toLowerCase() === mod.name.toLowerCase();
               const installed = isModInstalled(mod.name);
               const isInstalling = installingModName === mod.name;
-              const thumbUrl = getThumbnailUrl(mod.thumbnail || thumbnails[mod.name]);
 
               return (
                 <ModRow
                   key={mod.name}
-                  name={mod.name}
-                  title={mod.title}
-                  summary={mod.summary || 'No summary available.'}
-                  author={mod.owner}
-                  version={mod.latest_release?.version || '—'}
-                  downloads={formatDownloads(mod.downloads_count)}
-                  thumbnail={thumbUrl}
-                  category={mod.category}
+                  mod={mod}
                   isSelected={isSelected}
-                  installed={installed}
+                  isInstalled={installed}
                   installing={isInstalling}
-                  showGetButton={!installed}
-                  onClick={() => onSelectMod(isSelected ? null : mod.name)}
+                  category={mod.category}
+                  onSelect={() => onSelectMod(isSelected ? null : mod.name)}
                   onInstall={() => handleInstall(mod.name, mod.latest_release?.version)}
                 />
               );

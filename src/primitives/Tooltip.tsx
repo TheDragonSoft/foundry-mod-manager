@@ -56,9 +56,9 @@ export const Tooltip: React.FC<TooltipProps> = ({
       onFocus={showTooltip}
       onBlur={hideTooltip}
     >
-      {React.cloneElement(children as React.ReactElement, {
+      {React.cloneElement(children as React.ReactElement<any>, {
         ref: triggerRef,
-      })}
+      } as any)}
       
       {isVisible && (
         <div

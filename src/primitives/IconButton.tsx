@@ -5,6 +5,8 @@ export interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
   icon?: 'close' | 'refresh' | 'more' | 'search' | 'settings' | React.ReactNode;
   tooltip?: string;
   size?: 'sm' | 'md';
+  ariaLabel?: string;
+  variant?: 'ghost' | 'secondary' | 'primary' | string;
 }
 
 /**
@@ -17,9 +19,12 @@ export const IconButton: React.FC<IconButtonProps> = ({
   tooltip,
   size = 'md',
   className,
-  'aria-label': ariaLabel,
+  'aria-label': ariaLabelProp,
+  ariaLabel,
+  variant,
   ...props
 }) => {
+  const resolvedAriaLabel = ariaLabelProp || ariaLabel || tooltip;
   const [showTooltip, setShowTooltip] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -91,7 +96,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
       <button
         ref={buttonRef}
         className={clsx(baseStyles, className)}
-        aria-label={ariaLabel || tooltip}
+        aria-label={resolvedAriaLabel}
         title={tooltip}
         onMouseEnter={() => tooltip && setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}

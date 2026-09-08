@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Checkbox } from '../../primitives/Checkbox';
-import { Input } from '../../primitives/Input';
-import { Button } from '../../primitives/Button';
-import { Badge } from '../../primitives/Badge';
+import { Checkbox } from '../primitives/Checkbox';
+import { Input } from '../primitives/Input';
+import { Button } from '../primitives/Button';
+import { Badge } from '../primitives/Badge';
 
 interface FilterPopoverProps {
   allTags: string[];

@@ -7,6 +7,8 @@ export interface EmptyStateProps {
   title: string;
   hint?: string;
   action?: React.ReactNode;
+  actionLabel?: string;
+  onAction?: () => void;
   className?: string;
 }
 
@@ -21,6 +23,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   title,
   hint,
   action,
+  actionLabel,
+  onAction,
   className,
 }) => {
   const defaultIcon = (
@@ -49,7 +53,18 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       {icon || defaultIcon}
       <p className="text-body text-text-3 max-w-[26ch]">{title}</p>
       {hint && <p className="text-caption text-text-3">{hint}</p>}
-      {action && <div className="mt-2">{action}</div>}
+      {action ? (
+        <div className="mt-2">{action}</div>
+      ) : actionLabel && onAction ? (
+        <div className="mt-2">
+          <button
+            onClick={onAction}
+            className="px-3 py-1.5 text-xs rounded-md bg-bg-raised border border-border-strong text-text-1 hover:bg-bg-hover transition-colors"
+          >
+            {actionLabel}
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 };

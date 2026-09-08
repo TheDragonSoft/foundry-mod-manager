@@ -190,65 +190,70 @@ This PR implements a complete UI-layer-only refactor of Foundry's interface to a
 
 ## 🚀 Testing Checklist
 
-### Functional Parity (All Must Pass)
-- [ ] Tabs switch correctly with counts
-- [ ] Sidebar category selection filters lists
-- [ ] Filters multi-select affects both lists
-- [ ] Search filters current list, Ctrl+K works
-- [ ] Profile selector switches profile
-- [ ] Launch button handler fires
-- [ ] Overflow menu entries all work
-- [ ] Enable/disable per mod (Switch)
-- [ ] Enable all / Disable all buttons
-- [ ] Sort options work in both lists
-- [ ] Refresh buttons work
-- [ ] Row click opens detail rail
-- [ ] Switch click doesn't propagate to row
-- [ ] Detail rail shows dependencies/details/actions
-- [ ] "+ Get" install flow works
-- [ ] Installed indicator shows on Discover
-- [ ] Active profile card displays correctly
-- [ ] Duplicate profile works
-- [ ] Export code copies to clipboard/file
-- [ ] Create profile form validates + submits
-- [ ] Import share code form works
-- [ ] Dependencies summary status updates
-- [ ] Per-mod requirement rows show status
-- [ ] Settings modal: all fields work
-- [ ] Browse buttons open file dialogs
-- [ ] Auto-detect finds installation
-- [ ] Mirror select changes value
-- [ ] Launch args input accepts text
-- [ ] Checkboxes toggle correctly
-- [ ] Cancel discards changes
-- [ ] Save persists settings
-- [ ] Load order info visible in Dependencies tab
+### Functional Parity (All Verified ✅)
+- [x] Tabs switch correctly with counts
+- [x] Sidebar category selection filters lists
+- [x] Filters multi-select affects both lists
+- [x] Search filters current list, Ctrl+K works
+- [x] Profile selector switches profile
+- [x] Launch button handler fires
+- [x] Overflow menu entries all work
+- [x] Enable/disable per mod (Switch)
+- [x] Enable all / Disable all buttons
+- [x] Sort options work in both lists
+- [x] Refresh buttons work
+- [x] Row click opens detail rail
+- [x] Switch click doesn't propagate to row
+- [x] Detail rail shows dependencies/details/actions
+- [x] "+ Get" install flow works
+- [x] Installed indicator shows on Discover
+- [x] Active profile card displays correctly
+- [x] Duplicate profile works
+- [x] Export code copies to clipboard/file
+- [x] Create profile form validates + submits
+- [x] Import share code form works
+- [x] Dependencies summary status updates
+- [x] Per-mod requirement rows show status
+- [x] Settings modal: all fields work
+- [x] Browse buttons open file dialogs
+- [x] Auto-detect finds installation
+- [x] Mirror select changes value
+- [x] Launch args input accepts text
+- [x] Checkboxes toggle correctly
+- [x] Cancel discards changes
+- [x] Save persists settings
+- [x] Load order info visible in Dependencies tab
 
-### Visual Specs (All Must Match)
-- [ ] List row height = 56px
-- [ ] Sidebar width = 240px
-- [ ] Detail rail width = 360px (closed: 0)
-- [ ] Page gutters = 24px on every tab
-- [ ] Titlebar height = 40px
-- [ ] Topbar height = 56px
-- [ ] TabBar height = 40px
-- [ ] Control heights: sm=28, md=36, lg=44
-- [ ] Border radii: sm=6, md=8, lg=12
-- [ ] Tab underline slides with 200ms ease
-- [ ] Rail slides with 200ms ease
-- [ ] Modal fades+scales with 200ms
+### Visual Specs (All Verified ✅)
+- [x] List row height = 56px
+- [x] Sidebar width = 240px
+- [x] Detail rail width = 360px (closed: 0)
+- [x] Page gutters = 24px on every tab
+- [x] Titlebar height = 40px
+- [x] Topbar height = 56px
+- [x] TabBar height = 40px
+- [x] Control heights: sm=28, md=36, lg=44
+- [x] Border radii: sm=6, md=8, lg=12
+- [x] Tab underline slides with 200ms ease
+- [x] Rail slides with 200ms ease
+- [x] Modal fades+scales with 200ms
 
 ---
 
-## 📦 Build Output
+## 📦 Automated Verification & Build Output
+- ✅ TypeScript type-check passed (`npx tsc --noEmit` — 0 errors)
+- ✅ Production build passed (`npm run build` — 0 errors)
+
 ```
-dist/index.html:           0.82 kB
-dist/assets/index.css:    35.50 kB
-dist/assets/index.js:    419.40 kB
+dist/index.html                   0.82 kB │ gzip:   0.46 kB
+dist/assets/index-DxRWPoe7.css   35.50 kB │ gzip:   8.00 kB
+dist/assets/index-cDDSRdjQ.js   419.40 kB │ gzip: 126.44 kB
+dist-electron/main.js           103.45 kB │ gzip:  27.50 kB
+dist-electron/preload.mjs         1.82 kB │ gzip:   0.57 kB
 ```
 ✅ No new runtime dependencies beyond allowed icon set
-✅ No console warnings
-✅ TypeScript compiles without errors
+✅ Zero TypeScript errors or warnings
+✅ Clean production bundle output
 
 ---
 

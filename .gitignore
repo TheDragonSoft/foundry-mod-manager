@@ -1,9 +1,8 @@
-```
 # Build artifacts
 dist/
+dist-electron/
 build/
-*.js
-*.css
+release/
 
 # Dependencies
 node_modules/
@@ -63,4 +62,3 @@ htmlcov/
 *.tar.bz2
 *.tar.xz
 *.tar.zst
-```

@@ -1,9 +1,10 @@
 import React from 'react';
 import clsx from 'clsx';
 
-export interface BadgeProps {
+export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   tone?: 'accent' | 'success' | 'warn' | 'danger' | 'neutral';
   variant?: 'subtle' | 'outline' | 'solid';
+  size?: 'sm' | 'md' | string;
   children: React.ReactNode;
   className?: string;
 }
@@ -16,8 +17,10 @@ export interface BadgeProps {
 export const Badge: React.FC<BadgeProps> = ({
   tone = 'neutral',
   variant = 'subtle',
+  size = 'md',
   children,
   className,
+  ...rest
 }) => {
   const baseStyles = clsx(
     'inline-flex items-center gap-1 rounded-sm px-1.5 py-0.5 text-xs font-medium whitespace-nowrap',
@@ -50,5 +53,5 @@ export const Badge: React.FC<BadgeProps> = ({
     className
   );
 
-  return <span className={baseStyles}>{children}</span>;
+  return <span className={baseStyles} {...rest}>{children}</span>;
 };

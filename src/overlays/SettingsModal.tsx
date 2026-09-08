@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { AppSettings } from '../../types';
-import { api } from '../../services/api';
-import { Button } from '../../primitives/Button';
-import { Input } from '../../primitives/Input';
-import { Select } from '../../primitives/Select';
-import { Checkbox } from '../../primitives/Checkbox';
-import { IconButton } from '../../primitives/IconButton';
+import { AppSettings } from '../types';
+import { api } from '../services/api';
+import { Button } from '../primitives/Button';
+import { Input } from '../primitives/Input';
+import { Select } from '../primitives/Select';
+import { Checkbox } from '../primitives/Checkbox';
+import { IconButton } from '../primitives/IconButton';
 
 interface SettingsModalProps {
   settings: AppSettings | null;
@@ -236,7 +236,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <label className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   checked={formData.autoCheckUpdates}
-                  onChange={(e) => setFormData({ ...formData, autoCheckUpdates: e.target.checked })}
+                  onChange={(checked) => setFormData({ ...formData, autoCheckUpdates: checked })}
                 />
                 <span className="text-xs" style={{ color: 'var(--text-1)' }}>
                   Automatically check for mod updates on startup
@@ -246,7 +246,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <label className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   checked={formData.closeOnLaunch}
-                  onChange={(e) => setFormData({ ...formData, closeOnLaunch: e.target.checked })}
+                  onChange={(checked) => setFormData({ ...formData, closeOnLaunch: checked })}
                 />
                 <span className="text-xs" style={{ color: 'var(--text-1)' }}>
                   Close Foundry when Factorio starts

@@ -6,10 +6,12 @@ export interface SelectOption {
   label: string;
 }
 
+export type SelectOptionItem = SelectOption | string;
+
 export interface SelectProps {
-  options: SelectOption[];
+  options: SelectOptionItem[];
   value?: string | number;
-  onChange?: (value: string | number) => void;
+  onChange?: (value: any) => void;
   placeholder?: string;
   label?: string;
   helperText?: string;
@@ -40,7 +42,11 @@ export const Select: React.FC<SelectProps> = ({
   const listRef = useRef<HTMLUListElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const selectedOption = options.find((opt) => opt.value === value);
+  const normalizedOptions: SelectOption[] = options.map((opt) =>
+    typeof opt === 'string' ? { value: opt, label: opt } : opt
+  );
+
+  const selectedOption = normalizedOptions.find((opt) => opt.value === value);
   const displayedValue = selectedOption?.label || placeholder;
 
   // Close on outside click
@@ -64,13 +70,13 @@ export const Select: React.FC<SelectProps> = ({
         buttonRef.current?.focus();
       } else if (e.key === 'ArrowDown') {
         e.preventDefault();
-        setHighlightedIndex((prev) => Math.min(prev + 1, options.length - 1));
+        setHighlightedIndex((prev) => Math.min(prev + 1, normalizedOptions.length - 1));
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         setHighlightedIndex((prev) => Math.max(prev - 1, 0));
       } else if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        const option = options[highlightedIndex];
+        const option = normalizedOptions[highlightedIndex];
         if (option) {
           onChange?.(option.value);
           setIsOpen(false);
@@ -80,7 +86,7 @@ export const Select: React.FC<SelectProps> = ({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, highlightedIndex, options, onChange]);
+  }, [isOpen, highlightedIndex, normalizedOptions, onChange]);
 
   const handleSelect = (option: SelectOption) => {
     onChange?.(option.value);
@@ -137,7 +143,7 @@ export const Select: React.FC<SelectProps> = ({
             'scrollbar-stable'
           )}
         >
-          {options.map((option, index) => (
+          {normalizedOptions.map((option, index) => (
             <li
               key={option.value}
               role="option"
